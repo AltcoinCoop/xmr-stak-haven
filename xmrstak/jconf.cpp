@@ -51,8 +51,8 @@ using namespace rapidjson;
  * This enum needs to match index in oConfigValues, otherwise we will get a runtime error
  */
 enum configEnum {
-	aPoolList, sCurrency, bTlsSecureAlgo, iCallTimeout, iNetRetry, iGiveUpLimit, iVerboseLevel, bPrintMotd, iAutohashTime, 
-	bFlushStdout, bDaemonMode, sOutputFile, iHttpdPort, sHttpLogin, sHttpPass, bPreferIpv4, bAesOverride, sUseSlowMem 
+	aPoolList, sCurrency, bTlsSecureAlgo, iCallTimeout, iNetRetry, iGiveUpLimit, iVerboseLevel, bPrintMotd, iAutohashTime,
+	bFlushStdout, bDaemonMode, sOutputFile, iHttpdPort, sHttpLogin, sHttpPass, bPreferIpv4, bAesOverride, sUseSlowMem
 };
 
 struct configVal {
@@ -93,7 +93,7 @@ struct xmrstak_coin_algo
 	const char* default_pool;
 };
 
-xmrstak_coin_algo coin_algos[] = { 
+xmrstak_coin_algo coin_algos[] = {
 	{ "aeon", cryptonight_lite, "mine.aeon-pool.com:5555" },
 	{ "cryptonight", cryptonight, nullptr },
 	{ "cryptonight_lite", cryptonight_lite, nullptr },
@@ -103,7 +103,7 @@ xmrstak_coin_algo coin_algos[] = {
 	{ "intense", cryptonight, nullptr },
 	{ "karbo", cryptonight, nullptr },
 	{ "monero7", cryptonight_monero, "pool.usxmrpool.com:3333" },
-	{ "sumokoin", cryptonight_heavy, nullptr }
+	{ "haven", cryptonight_heavy, nullptr }
 };
 
 constexpr size_t coin_alogo_size = (sizeof(coin_algos)/sizeof(coin_algos[0]));
@@ -318,7 +318,7 @@ void jconf::GetAlgoList(std::string& list)
 bool jconf::IsOnAlgoList(std::string& needle)
 {
 	std::transform(needle.begin(), needle.end(), needle.begin(), ::tolower);
-	
+
 	if(needle == "monero")
 	{
 		printer::inst()->print_msg(L0, "You entered Monero as coin name. Monero will hard-fork the PoW.\nThis means it will stop being compatible with other cryptonight coins.\n"
@@ -337,7 +337,7 @@ bool jconf::IsOnAlgoList(std::string& needle)
 const char* jconf::GetDefaultPool(const char* needle)
 {
 	const char* default_example = "pool.example.com:3333";
-	
+
 	for(size_t i=0; i < coin_alogo_size; i++)
 	{
 		if(strcmp(needle, coin_algos[i].coin_name) == 0)
@@ -509,7 +509,7 @@ bool jconf::parse_config(const char* sFilename, const char* sFilenamePools)
 	for(uint32_t i=0; i < pool_cnt; i++)
 	{
 		const Value& oThdConf = prv->configValues[aPoolList]->GetArray()[i];
-		
+
 		if(!oThdConf.IsObject())
 		{
 			printer::inst()->print_msg(L0, "Invalid config file. pool_list must contain objects.");

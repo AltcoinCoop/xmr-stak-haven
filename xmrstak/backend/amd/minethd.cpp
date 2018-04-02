@@ -73,7 +73,7 @@ minethd::minethd(miner_work& pWork, size_t iNo, GpuContext* ctx, const jconf::th
 
 extern "C"  {
 #ifdef WIN32
-__declspec(dllexport) 
+__declspec(dllexport)
 #endif
 std::vector<iBackend*>* xmrstak_start_backend(uint32_t threadOffset, miner_work& pWork, environment& env)
 {
@@ -122,7 +122,7 @@ std::vector<iBackend*>* minethd::thread_starter(uint32_t threadOffset, miner_wor
 		win_exit();
 	}
 
-	// \ todo get device count and exit if no opencl device 
+	// \ todo get device count and exit if no opencl device
 
 	if(!init_gpus())
 	{
@@ -137,7 +137,7 @@ std::vector<iBackend*>* minethd::thread_starter(uint32_t threadOffset, miner_wor
 	for (i = 0; i < n; i++)
 	{
 		jconf::inst()->GetThreadConfig(i, cfg);
-		
+
 		if(cfg.cpu_aff >= 0)
 		{
 #if defined(__APPLE__)
@@ -223,7 +223,7 @@ void minethd::work_main()
 			{
 				hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_monero);
 			}
-			else if(miner_algo == cryptonight_heavy && version < 3 && new_version >= 3)
+			else if(miner_algo == cryptonight_heavy && version < 2 && new_version >= 2)
 			{
 				hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_heavy);
 			}
@@ -285,7 +285,7 @@ void minethd::work_main()
 		{
 			hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_monero);
 		}
-		else if(miner_algo == cryptonight_heavy && version < 3 && new_version >= 3)
+		else if(miner_algo == cryptonight_heavy && version < 2 && new_version >= 2)
 		{
 			hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_heavy);
 		}

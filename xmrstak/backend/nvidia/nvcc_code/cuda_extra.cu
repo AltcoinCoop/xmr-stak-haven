@@ -184,7 +184,7 @@ __global__ void cryptonight_extra_gpu_final( int threads, uint64_t target, uint3
 	uint32_t * __restrict__ ctx_state = d_ctx_state + thread * 50;
 	uint64_t hash[4];
 	uint32_t state[50];
-	
+
 	#pragma unroll
 	for ( i = 0; i < 50; i++ )
 		state[i] = ctx_state[i];
@@ -293,7 +293,7 @@ extern "C" int cryptonight_extra_cpu_init(nvid_ctx* ctx)
 	}
 	else
 		ctx->d_ctx_state2 = ctx->d_ctx_state;
-	
+
 	CUDA_CHECK(ctx->device_id, cudaMalloc(&ctx->d_ctx_key1, 40 * sizeof(uint32_t) * wsize));
 	CUDA_CHECK(ctx->device_id, cudaMalloc(&ctx->d_ctx_key2, 40 * sizeof(uint32_t) * wsize));
 	CUDA_CHECK(ctx->device_id, cudaMalloc(&ctx->d_ctx_text, 32 * sizeof(uint32_t) * wsize));
@@ -318,7 +318,7 @@ extern "C" void cryptonight_extra_cpu_prepare(nvid_ctx* ctx, uint32_t startNonce
 	dim3 grid( ( wsize + threadsperblock - 1 ) / threadsperblock );
 	dim3 block( threadsperblock );
 
-	if(miner_algo == cryptonight_heavy && version >= 3)
+	if(miner_algo == cryptonight_heavy && version >= 2)
 	{
 		CUDA_CHECK_KERNEL(ctx->device_id, cryptonight_extra_gpu_prepare<cryptonight_heavy><<<grid, block >>>( wsize, ctx->d_input, ctx->inputlen, startNonce,
 			ctx->d_ctx_state,ctx->d_ctx_state2, ctx->d_ctx_a, ctx->d_ctx_b, ctx->d_ctx_key1, ctx->d_ctx_key2 ));
@@ -344,7 +344,7 @@ extern "C" void cryptonight_extra_cpu_final(nvid_ctx* ctx, uint32_t startNonce, 
 	CUDA_CHECK(ctx->device_id, cudaMemset( ctx->d_result_nonce, 0xFF, 10 * sizeof (uint32_t ) ));
 	CUDA_CHECK(ctx->device_id, cudaMemset( ctx->d_result_count, 0, sizeof (uint32_t ) ));
 
-	if(miner_algo == cryptonight_heavy && version >= 3)
+	if(miner_algo == cryptonight_heavy && version >= 2)
 	{
 		CUDA_CHECK_MSG_KERNEL(
 			ctx->device_id,
@@ -514,7 +514,7 @@ extern "C" int cuda_get_deviceinfo(nvid_ctx* ctx)
 		 */
 		ctx->device_threads = 64;
 		constexpr size_t byteToMiB = 1024u * 1024u;
-		
+
 		// no limit by default 1TiB
 		size_t maxMemUsage = byteToMiB * byteToMiB;
 		if(props.major == 6)
@@ -572,7 +572,7 @@ extern "C" int cuda_get_deviceinfo(nvid_ctx* ctx)
 		CUDA_CHECK(ctx->device_id, cudaFree(tmp));
 		// delete created context on the gpu
 		CUDA_CHECK(ctx->device_id, cudaDeviceReset());
-		
+
 		ctx->total_device_memory = totalMemory;
 		ctx->free_device_memory = freeMemory;
 
@@ -608,7 +608,7 @@ extern "C" int cuda_get_deviceinfo(nvid_ctx* ctx)
 		size_t perThread = hashMemSize + 16192u + 680u;
 		if(cryptonight_heavy == ::jconf::inst()->GetMiningAlgo())
 			perThread += 50 * 4; // state double buffer
-		
+
 		size_t max_intensity = limitedMemory / perThread;
 		ctx->device_threads = max_intensity / ctx->device_blocks;
 		// use only odd number of threads

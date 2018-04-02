@@ -181,7 +181,7 @@ std::vector<iBackend*>* minethd::thread_starter(uint32_t threadOffset, miner_wor
 		}
 		else
 			printer::inst()->print_msg(L1, "Starting NVIDIA GPU thread %d, no affinity.", i);
-		
+
 		minethd* thd = new minethd(pWork, i + threadOffset, cfg);
 		pvThreads->push_back(thd);
 
@@ -270,7 +270,7 @@ void minethd::work_main()
 			{
 				hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_monero);
 			}
-			else if(miner_algo == cryptonight_heavy && version < 3 && new_version >= 3)
+			else if(miner_algo == cryptonight_heavy && version < 2 && new_version >= 2)
 			{
 				hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_heavy);
 			}
@@ -295,7 +295,7 @@ void minethd::work_main()
 			{
 				globalStates::inst().calc_start_nonce(iNonce, oWork.bNiceHash, h_per_round * 16);
 			}
-			
+
 			uint32_t foundNonce[10];
 			uint32_t foundCount;
 
@@ -339,7 +339,7 @@ void minethd::work_main()
 		{
 			hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_monero);
 		}
-		else if(miner_algo == cryptonight_heavy && version < 3 && new_version >= 3)
+		else if(miner_algo == cryptonight_heavy && version < 2 && new_version >= 2)
 		{
 			hash_fun = cpu::minethd::func_selector(::jconf::inst()->HaveHardwareAes(), true /*bNoPrefetch*/, cryptonight_heavy);
 		}

@@ -170,7 +170,7 @@ __forceinline__ __device__ void unusedVar( const T& )
  * - for <sm_30 shared memory is needed
  *
  * group_n - must be a power of 2!
- * 
+ *
  * @param ptr pointer to shared memory, size must be `threadIdx.x * sizeof(uint32_t)`
  *            value can be NULL for compute architecture >=sm_30
  * @param sub thread number within the group, range [0:group_n]
@@ -284,7 +284,7 @@ __global__ void cryptonight_core_gpu_phase2( int threads, int bfactor, int parti
 			}
 			else
 				storeGlobal32( long_state + j, z );
-			
+
 			//MUL_SUM_XOR_DST(c, a, &long_state[((uint32_t *)c)[0] & MASK]);
 			j = ( ( *t1 & MASK ) >> 2 ) + sub;
 
@@ -303,7 +303,7 @@ __global__ void cryptonight_core_gpu_phase2( int threads, int bfactor, int parti
 
 			res = *( (uint64_t *) t2 )  >> ( sub & 1 ? 32 : 0 );
 
-			
+
 			if(ALGO == cryptonight_monero)
 			{
 				const uint32_t tweaked_res = tweak1_2[sub & 1] ^ res;
@@ -312,7 +312,7 @@ __global__ void cryptonight_core_gpu_phase2( int threads, int bfactor, int parti
 			}
 			else
 				storeGlobal32( long_state + j, res );
-			
+
 			a = ( sub & 1 ? yy[1] : yy[0] ) ^ res;
 			idx0 = shuffle<4>(sPtr,sub, a, 0);
 			if(ALGO == cryptonight_heavy)
@@ -363,7 +363,7 @@ __global__ void cryptonight_core_gpu_phase3( int threads, int bfactor, int parti
 	MEMCPY8( text, d_ctx_state + thread * 50 + sub + 16, 2 );
 
 	__syncthreads( );
-	
+
 #if( __CUDA_ARCH__ < 300 )
         extern __shared__ uint32_t shuffleMem[];
         volatile uint32_t* sPtr = (volatile uint32_t*)(shuffleMem + (threadIdx.x& 0xFFFFFFFC));
@@ -378,7 +378,7 @@ __global__ void cryptonight_core_gpu_phase3( int threads, int bfactor, int parti
 			text[j] ^= long_state[((IndexType) thread * MEMORY) + ( sub + i + j)];
 
 		cn_aes_pseudo_round_mut( sharedMemory, text, key );
-		
+
 		if(ALGO == cryptonight_heavy)
 		{
 #pragma unroll
@@ -390,7 +390,7 @@ __global__ void cryptonight_core_gpu_phase3( int threads, int bfactor, int parti
 	if(ALGO == cryptonight_heavy)
 	{
 		__syncthreads( );
-		
+
 		for ( int i = start; i < end; i += 32 )
 		{
 #pragma unroll
@@ -433,7 +433,7 @@ void cryptonight_core_gpu_hash(nvid_ctx* ctx, uint32_t nonce)
 	{
 		CUDA_CHECK_KERNEL(ctx->device_id, cryptonight_core_gpu_phase1<ITERATIONS,MEMORY><<< grid, block8 >>>( ctx->device_blocks*ctx->device_threads,
 			bfactorOneThree, i,
-			ctx->d_long_state, 
+			ctx->d_long_state,
 			(ALGO == cryptonight_heavy ? ctx->d_ctx_state2 : ctx->d_ctx_state),
 			ctx->d_ctx_key1 ));
 
@@ -487,7 +487,7 @@ void cryptonight_core_cpu_hash(nvid_ctx* ctx, xmrstak_algo miner_algo, uint32_t 
 	}
 	else if(miner_algo == cryptonight_heavy)
 	{
-		if(version >= 3)
+		if(version >= 2)
 			cryptonight_core_gpu_hash<CRYPTONIGHT_HEAVY_ITER, CRYPTONIGHT_HEAVY_MASK, CRYPTONIGHT_HEAVY_MEMORY/4, cryptonight_heavy>(ctx, startNonce);
 		else
 		{

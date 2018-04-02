@@ -330,7 +330,7 @@ std::vector<iBackend*> minethd::thread_starter(uint32_t threadOffset, miner_work
 		}
 		else
 			printer::inst()->print_msg(L1, "Starting %dx thread, no affinity.", cfg.iMultiway);
-		
+
 		minethd* thd = new minethd(pWork, i + threadOffset, cfg.iMultiway, cfg.bNoPrefetch, cfg.iCpuAff);
 		pvThreads.push_back(thd);
 	}
@@ -457,7 +457,7 @@ void minethd::work_main()
 
 		if(::jconf::inst()->GetMiningAlgo() == cryptonight_heavy)
 		{
-			if(oWork.bWorkBlob[0] >= 3)
+			if(oWork.bWorkBlob[0] >= 2)
 				hash_fun = func_selector(::jconf::inst()->HaveHardwareAes(), bNoPrefetch, cryptonight_heavy);
 			else
 				hash_fun = func_selector(::jconf::inst()->HaveHardwareAes(), bNoPrefetch, cryptonight);
@@ -571,7 +571,7 @@ minethd::cn_hash_fun_multi minethd::func_multi_selector(size_t N, bool bHaveAes,
 	std::bitset<2> digit;
 	digit.set(0, !bHaveAes);
 	digit.set(1, !bNoPrefetch);
-	
+
 	return func_table[algv << 4 | (N-2) << 2 | digit.to_ulong()];
 }
 
@@ -672,7 +672,7 @@ void minethd::multiway_work_main(cn_hash_fun_multi hash_fun_multi)
 
 		if(::jconf::inst()->GetMiningAlgo() == cryptonight_heavy)
 		{
-			if(oWork.bWorkBlob[0] >= 3)
+			if(oWork.bWorkBlob[0] >= 2)
 				hash_fun_multi = func_multi_selector(N, ::jconf::inst()->HaveHardwareAes(), bNoPrefetch, cryptonight_heavy);
 			else
 				hash_fun_multi = func_multi_selector(N, ::jconf::inst()->HaveHardwareAes(), bNoPrefetch, cryptonight);
